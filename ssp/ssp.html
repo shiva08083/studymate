@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate - AI-Powered PDF Q&A System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .qa-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .upload-area {
+            border: 2px dashed #6a11cb;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            background-color: #f8f6ff;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: #5a0fb8;
+        }
+        
+        .uploaded-files {
+            margin-top: 20px;
+        }
+        
+        .file-list {
+            list-style-type: none;
+            margin-top: 10px;
+        }
+        
+        .file-list li {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-list li .file-name {
+            flex-grow: 1;
+        }
+        
+        .file-list li .file-remove {
+            color: #ff4757;
+            cursor: pointer;
+        }
+        
+        .question-input {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .question-input input {
+            flex-grow: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .question-input input:focus {
+            border-color: #6a11cb;
+        }
+        
+        .question-input button {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .question-input button:hover {
+            background: #5a0fb8;
+        }
+        
+        .answer-container {
+            flex-grow: 1;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        
+        .answer-placeholder {
+            color: #888;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .answer-content {
+            line-height: 1.6;
+        }
+        
+        .answer-content h3 {
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+        
+        .answer-content p {
+            margin-bottom: 15px;
+        }
+        
+        .source-reference {
+            background: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+        
+        .feature {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            min-width: 250px;
+            max-width: 380px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h1>StudyMate</h1>
+            <p>AI-Powered PDF-Based Q&A System for Students</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="upload-section">
+                <h2>Upload Study Materials</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p>Drag & Drop your PDF files here</p>
+                    <p>or</p>
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                    <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple>
+                </div>
+                
+                <div class="uploaded-files">
+                    <h3>Uploaded Files</h3>
+                    <ul class="file-list" id="fileList">
+                        <li>No files uploaded yet</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="qa-section">
+                <h2>Ask Questions About Your Documents</h2>
+                <div class="question-input">
+                    <input type="text" id="questionInput" placeholder="Type your question here...">
+                    <button id="askButton">Ask</button>
+                </div>
+                
+                <div class="answer-container" id="answerContainer">
+                    <div class="answer-placeholder">
+                        <i class="fas fa-comment-dots" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>Your answers will appear here. Ask a question to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h3>PDF Text Extraction</h3>
+                <p>Efficiently extracts and chunks content from multiple PDFs using PyMuPDF for high-quality processing.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Semantic Search</h3>
+                <p>Retrieves the most relevant text chunks using SentenceTransformers and FAISS for precise matching.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Answers</h3>
+                <p>Uses IBM Watsonx's Mixtral-8x7B-Instruct model to generate informative, grounded answers.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>StudyMate - AI-Powered Academic Assistant</p>
+            <p>© 2023 StudyMate. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simulated functionality for demonstration purposes
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const questionInput = document.getElementById('questionInput');
+            const askButton = document.getElementById('askButton');
+            const answerContainer = document.getElementById('answerContainer');
+            
+            // File upload handling
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '#f0f0ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.backgroundColor = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '';
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            fileInput.addEventListener('change', () => {
+                handleFiles(fileInput.files);
+            });
+            
+            function handleFiles(files) {
+                if (files.length === 0) return;
+                
+                fileList.innerHTML = '';
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type !== 'application/pdf') continue;
+                    
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-remove" onclick="removeFile(this)"><i class="fas fa-times"></i></span>
+                    `;
+                    fileList.appendChild(li);
+                }
+            }
+            
+            // Question answering simulation
+            askButton.addEventListener('click', handleQuestion);
+            questionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleQuestion();
+            });
+            
+            function handleQuestion() {
+                const question = questionInput.value.trim();
+                if (question === '') return;
+                
+                // Show loading state
+                answerContainer.innerHTML = `
+                    <div class="answer-placeholder">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>Analyzing your question and searching through documents...</p>
+                    </div>
+                `;
+                
+                // Simulate processing time
+                setTimeout(() => {
+                    showAnswer(question);
+                }, 1500);
+            }
+            
+            function showAnswer(question) {
+                // Sample answers based on question keywords
+                let answerText = '';
+                let sourceText = '';
+                
+                if (question.toLowerCase().includes('machine learning') || question.toLowerCase().includes('ml')) {
+                    answerText = `<p>Machine learning is a subset of artificial intelligence that focuses on building systems that can learn from data and improve their performance over time without being explicitly programmed. It involves algorithms that can identify patterns and make decisions based on input data.</p>
+                    <p>There are three main types of machine learning: supervised learning, unsupervised learning, and reinforcement learning. Each approach has different applications and requires different types of data.</p>`;
+                    sourceText = Source: Introduction to Machine Learning textbook, Chapter 3, pages 45-48;
+                } else if (question.toLowerCase().includes('neural network') || question.toLowerCase().includes('deep learning')) {
+                    answerText = `<p>Neural networks are computing systems inspired by the biological neural networks that constitute animal brains. They consist of interconnected nodes (artificial neurons) that process and transmit information.</p>
+                    <p>Deep learning refers to neural networks with many layers (deep architectures). These networks can learn increasingly abstract representations of the data through each successive layer.</p>`;
+                    sourceText = Source: Advanced AI Research Papers, Volume 2, page 132;
+                } else if (question.toLowerCase().includes('python') || question.toLowerCase().includes('programming')) {
+                    answerText = `<p>Python is a high-level, interpreted programming language known for its readability and versatility. It supports multiple programming paradigms including procedural, object-oriented, and functional programming.</p>
+                    <p>Python is widely used in data science, machine learning, web development, and scientific computing due to its extensive library ecosystem and simple syntax.</p>`;
+                    sourceText = Source: Python Programming lecture notes, Week 5;
+                } else {
+                    answerText = `<p>Based on the uploaded documents, ${question} refers to a concept that is covered in multiple sections of your study materials. The key points are:</p>
+                    <ul>
+                        <li>This is a fundamental concept in the field</li>
+                        <li>It has applications across multiple disciplines</li>
+                        <li>Recent research has expanded our understanding of this topic</li>
+                    </ul>
+                    <p>For more specific information, please ensure your question includes key terms from your documents.</p>`;
+                    sourceText = Source: Multiple references across uploaded documents;
+                }
+                
+                answerContainer.innerHTML = `
+                    <div class="answer-content">
+                        <h3>Answer:</h3>
+                        ${answerText}
+                        <div class="source-reference">
+                            ${sourceText}
+                        </div>
+                    </div>
+                `;
+                
+                // Clear the question input
+                questionInput.value = '';
+            }
+        });
+        
+        // Function to remove file from the list
+        function removeFile(element) {
+            const li = element.parentElement;
+            li.parentElement.removeChild(li);
+            
+            // If no files left, show placeholder
+            if (document.getElementById('fileList').children.length === 0) {
+                document.getElementById('fileList').innerHTML = '<li>No files uploaded yet</li>';
+            }
+        }
+    </script>
+</body>
+</html>
